@@ -3,23 +3,27 @@
   --color-text: #fff;
 }
 
-text {
+.header {
   color: #fff;
   font-weight: bold;
   font-size: 1.5em;
   text-align: center;
   padding-top: 2em;
-  padding-bottom: 2em;
 }
 
 .scroll-view {
-  display: flex;
-  flex-direction: column;
+  /*display: flex;*/
+  /*flex-direction: column;*/
   margin: 1vh;
-  height: 75vh;
-  flex-wrap: wrap;
+  height: 85vh;
 }
 
 .scroll-view_loading {
   font-size: 50px;
+}
+
+button {
+  color: #fff;
+  width: 100px;
+  height: 100px;
 }

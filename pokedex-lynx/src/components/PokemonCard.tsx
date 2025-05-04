@@ -1,6 +1,5 @@
 import './PokemonCard.css';
 interface Props {
-    key: string
     index: number
     name: string
 }
@@ -8,7 +7,7 @@ interface Props {
 const getPokeImage = (index: number) => {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index}.png`;
 };
-export function PokemonCard({index, name, key}: Props) {
+export function PokemonCard({index, name}: Props) {
     return (
         <view id={`${index}`} className="card">
             <text>{`${index} : ${name}`}</text>

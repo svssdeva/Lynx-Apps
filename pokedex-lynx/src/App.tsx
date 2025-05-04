@@ -1,6 +1,8 @@
 import {useCallback, useEffect, useRef, useState} from '@lynx-js/react'
 import './App.css'
 import {PokemonCard} from "./components/PokemonCard.js";
+import {useNavigate} from "react-router";
+
 
 export interface Pokemon {
     name: string;
@@ -11,15 +13,12 @@ export interface Pokemon {
 export function App() {
     const [offset, setOffset] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [search, setSearch] = useState("");
     const [pokemons, setPokemons] = useState<Pokemon[]>([]);
-    const [filteredPokemons, setFilteredPokemons] = useState<Pokemon[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
-    const loader = useRef(null);
     const hasLoadedOnce = useRef(false);
-
+    const navigate = useNavigate();
     const handleCardClick = (index: number) => {
-       // navigate(`/pokemon/${index}`);
+        navigate(`/pokemon/${index}`);
     };
     const getPokemons = useCallback((offset: number, limit = 20) => {
         setIsLoading(true);
@@ -43,7 +42,6 @@ export function App() {
                     const newUnique = enrichedResults.filter((p: { index: number; }) => !existingIndexes.has(p.index));
                     return [...prev, ...newUnique];
                 });
-
                 setIsLoading(false);
             })
             .catch(err => {
@@ -57,65 +55,37 @@ export function App() {
             hasLoadedOnce.current = true;
         }
     }, [getPokemons]);
-    // useEffect(() => {
-    //     if (offset !== 0) {
-    //         getPokemons(offset);
-    //     }
-    // }, [offset]);
-    // useEffect(() => {
-    //     const observer = new IntersectionObserver(
-    //         entries => {
-    //             const first = entries[0];
-    //             if (first.isIntersecting && !isLoading) {
-    //                 if (hasLoadedOnce.current && (totalCount === null || offset + 20 < totalCount)) {
-    //                     setOffset(prev => prev + 20);
-    //                 }
-    //             }
-    //         },
-    //         { threshold: 1.0 }
-    //     );
-    //
-    //     const currentLoader = loader.current;
-    //     if (currentLoader) observer.observe(currentLoader);
-    //
-    //     return () => {
-    //         if (currentLoader) observer.unobserve(currentLoader);
-    //     };
-    // }, [isLoading]);
-
-    useEffect(() => {
-        if (search.trim()) {
-            const filtered = pokemons.filter(p =>
-                p.name.toLowerCase().includes(search.toLowerCase())
-            );
-            setFilteredPokemons(filtered);
-        } else {
-            setFilteredPokemons(pokemons);
-        }
-    }, [search, pokemons]);
-
 
 
     return (
       <>
         <view>
-          <text>Hello Lynx Pokedex</text>
+          <text className="header">Hello Lynx Pokedex</text>
         </view>
           {/*<view>*/}
           {/*    <text>{JSON.stringify(pokemons)}</text>*/}
           {/*</view>*/}
-        <scroll-view scroll-orientation="vertical" className="scroll-view">
+        <list
+            scroll-orientation="vertical"
+            list-type="waterfall"
+            className="scroll-view"
+            span-count={2}
+
+        >
             {isLoading ? <text className="scroll-view_loading">Loading...</text> : (
-                pokemons.map((pokemon) => (
-                    <PokemonCard
-                        key={`${pokemon.name}-${pokemon.index}`}
-                        index={pokemon.index}
-                        name={pokemon.name}
-                    ></PokemonCard>
+                pokemons.map((pokemon, index) => (
+                   <list-item item-key={`list-item-${index}`} key={`list-item-${index}`} bindtap={() => handleCardClick(pokemon.index)}>
+                       <PokemonCard
+                           index={pokemon.index}
+                           name={pokemon.name}
+                       ></PokemonCard>
+                   </list-item>
                 ))
             )}
-
-        </scroll-view>
+        </list>
+          <view>
+                <button>Load More</button>
+          </view>
       </>
   )
 }

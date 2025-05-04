@@ -1,10 +1,15 @@
 .card {
     background: #fff;
-    flex-grow: 2;
+    /*flex-grow: 2;*/
     border-radius: 40px;
-    display: flex;
-    flex-direction: column;
+    /*display: flex;*/
+    /*flex-direction: column;*/
     align-items: center;
     justify-content: center;
-    margin-bottom: 2vh;
+    margin: 0.5vh;
+    box-shadow: 0 0 10px 4px rgba(255,255,255,0.5);
+}
+
+text {
+    color: #000;
 }
