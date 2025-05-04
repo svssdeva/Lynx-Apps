@@ -21,7 +21,9 @@ export function App() {
         navigate(`/pokemon/${index}`);
     };
     const getPokemons = useCallback((offset: number, limit = 20) => {
-        setIsLoading(true);
+       if(offset === 0) {
+           setIsLoading(true);
+       }
         fetch(`https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`)
             .then(res => res.json())
             .then(data => {
@@ -47,7 +49,9 @@ export function App() {
             .catch(err => {
                 console.error("Failed to fetch Pokemons", err);
                 setIsLoading(false);
-            });
+            }).finally(() => {
+
+        });
     }, [totalCount]);
     useEffect(() => {
         if (!hasLoadedOnce.current) {
@@ -56,7 +60,13 @@ export function App() {
         }
     }, [getPokemons]);
 
-
+    const addDataToLower = () => {
+        console.log("addDataToLower");
+        setTimeout(() => {
+            setOffset(prev => prev + 20);
+            getPokemons(offset);
+        }, 1500);
+    };
     return (
       <>
         <view>
@@ -69,12 +79,16 @@ export function App() {
             scroll-orientation="vertical"
             list-type="waterfall"
             className="scroll-view"
-            span-count={2}
-
+            span-count={1}
+            bounces={false}
+            lower-threshold-item-count={2}
+            bindscrolltolower={(e) => {
+                addDataToLower();
+            }}
         >
             {isLoading ? <text className="scroll-view_loading">Loading...</text> : (
-                pokemons.map((pokemon, index) => (
-                   <list-item item-key={`list-item-${index}`} key={`list-item-${index}`} bindtap={() => handleCardClick(pokemon.index)}>
+                pokemons.map((pokemon) => (
+                   <list-item bindtap={() => handleCardClick(pokemon.index)} item-key={`${pokemon}-${pokemon.index}`}>
                        <PokemonCard
                            index={pokemon.index}
                            name={pokemon.name}
@@ -83,9 +97,9 @@ export function App() {
                 ))
             )}
         </list>
-          <view>
-                <button>Load More</button>
-          </view>
+          {/*<view>*/}
+          {/*      <text className="footer">Load More</text>*/}
+          {/*</view>*/}
       </>
   )
 }
